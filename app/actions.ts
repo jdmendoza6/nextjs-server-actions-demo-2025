@@ -1,8 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import fs from 'fs';
-import path from 'path';
+import { cache } from 'react';
 
 // Define the Todo type
 export type Todo = {
@@ -11,22 +10,14 @@ export type Todo = {
   completed: boolean;
 };
 
-// Path to our JSON file that will act as a simple database
-const todosFilePath = path.join(process.cwd(), 'todos.json');
+// In-memory storage for todos
+// Note: This will reset on server restart/redeploy
+let todos: Todo[] = [];
 
-// Initialize the todos file if it doesn't exist
-const initTodosFile = () => {
-  if (!fs.existsSync(todosFilePath)) {
-    fs.writeFileSync(todosFilePath, JSON.stringify([], null, 2));
-  }
-};
-
-// Get all todos
-export async function getTodos(): Promise<Todo[]> {
-  initTodosFile();
-  const todosData = fs.readFileSync(todosFilePath, 'utf-8');
-  return JSON.parse(todosData);
-}
+// Get all todos with caching for better performance
+export const getTodos = cache(async (): Promise<Todo[]> => {
+  return [...todos];
+});
 
 // Add a new todo
 export async function addTodo(formData: FormData) {
@@ -36,9 +27,6 @@ export async function addTodo(formData: FormData) {
     return { error: 'Todo text cannot be empty' };
   }
 
-  initTodosFile();
-  const todos = await getTodos();
-  
   const newTodo: Todo = {
     id: Date.now().toString(),
     text: text.trim(),
@@ -46,7 +34,6 @@ export async function addTodo(formData: FormData) {
   };
   
   todos.push(newTodo);
-  fs.writeFileSync(todosFilePath, JSON.stringify(todos, null, 2));
   
   revalidatePath('/');
   return { success: true };
@@ -54,12 +41,9 @@ export async function addTodo(formData: FormData) {
 
 // Toggle todo completion status
 export async function toggleTodo(id: string) {
-  const todos = await getTodos();
-  const updatedTodos = todos.map(todo => 
+  todos = todos.map(todo => 
     todo.id === id ? { ...todo, completed: !todo.completed } : todo
   );
-  
-  fs.writeFileSync(todosFilePath, JSON.stringify(updatedTodos, null, 2));
   
   revalidatePath('/');
   return { success: true };
@@ -67,10 +51,7 @@ export async function toggleTodo(id: string) {
 
 // Delete a todo
 export async function deleteTodo(id: string) {
-  const todos = await getTodos();
-  const updatedTodos = todos.filter(todo => todo.id !== id);
-  
-  fs.writeFileSync(todosFilePath, JSON.stringify(updatedTodos, null, 2));
+  todos = todos.filter(todo => todo.id !== id);
   
   revalidatePath('/');
   return { success: true };
