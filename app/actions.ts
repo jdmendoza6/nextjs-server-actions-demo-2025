@@ -18,8 +18,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 export const getTodos = cache(async (): Promise<Todo[]> => {
   try {
     const response = await fetch(`${API_URL}/todos`, {
-      cache: 'no-store',
-      next: { revalidate: 0 }
+      next: { revalidate: 60 } // Revalidate every 60 seconds
     });
     
     if (!response.ok) {
