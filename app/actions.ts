@@ -10,8 +10,8 @@ export type Todo = {
   completed: boolean;
 };
 
-// Laravel API URL - Use environment variable with fallback
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://larave-Appli-xNR5Inm5O1Gw-1611255293.ap-southeast-1.elb.amazonaws.com/api';
+// Laravel API URL - Hardcoded for production to avoid build issues
+const API_URL = 'http://larave-Appli-xNR5Inm5O1Gw-1611255293.ap-southeast-1.elb.amazonaws.com/api';
 
 // Get all todos with caching for better performance
 export const getTodos = cache(async (): Promise<Todo[]> => {

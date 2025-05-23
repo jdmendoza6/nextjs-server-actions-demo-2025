@@ -6,6 +6,7 @@ frontend:
         - npm ci
     build:
       commands:
+        - echo "NEXT_PUBLIC_API_URL=http://larave-Appli-xNR5Inm5O1Gw-1611255293.ap-southeast-1.elb.amazonaws.com/api" >> .env.production
         - npm run build
   artifacts:
     baseDirectory: .next
@@ -15,3 +16,6 @@ frontend:
     paths:
       - node_modules/**/*
       - .next/cache/**/*
+    excludePaths:
+      - .next/server/pages/**/*
+      - .next/static/development/**/*
