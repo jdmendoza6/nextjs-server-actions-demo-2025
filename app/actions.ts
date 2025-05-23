@@ -10,10 +10,8 @@ export type Todo = {
   completed: boolean;
 };
 
-// Laravel API URL - Hardcoded for production to avoid build issues
-// const API_URL = 'http://larave-Appli-xNR5Inm5O1Gw-1611255293.ap-southeast-1.elb.amazonaws.com/api';
-
-const API_URL = 'http://k8s-laraveltodoapi-01d23bbaf7-506717080.ap-southeast-1.elb.amazonaws.com/api';
+// Use environment variable for API URL
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 
 // Get all todos with caching for better performance
