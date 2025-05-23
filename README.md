@@ -41,15 +41,68 @@ You can deploy this Next.js application using AWS Amplify, which provides a full
 
 For more details, check out the [AWS Amplify deployment guide](https://docs.aws.amazon.com/amplify/latest/userguide/deploy-nextjs.html).
 
-### Deploy on Amazon ECS
+### Deploy on Amazon ECS/EKS
 
-For containerized deployment, you can use Amazon Elastic Container Service (ECS):
+For containerized deployment, you can use Amazon Elastic Container Service (ECS) or Elastic Kubernetes Service (EKS):
 
 1. Build your Docker image
 2. Push to Amazon Elastic Container Registry (ECR)
-3. Deploy using ECS with Fargate or EC2
+3. Deploy using ECS with Fargate or EC2, or EKS
 
-Refer to the [Amazon ECS deployment guide](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/getting-started.html) for detailed instructions.
+#### Configuring API Endpoints with ALB Integration
+
+To integrate your Next.js application with ECS/EKS API endpoints via Application Load Balancer:
+
+1. Update your Next.js configuration (`next.config.js`):
+```javascript
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: process.env.API_URL + '/:path*' // Points to your ALB endpoint
+      }
+    ]
+  }
+}
+
+module.exports = nextConfig
+```
+
+2. Set up environment variables:
+```bash
+# .env.local
+API_URL=https://your-alb-endpoint.region.elb.amazonaws.com
+```
+
+3. Configure your ALB:
+   - Create target groups for your API services
+   - Set up routing rules based on URL paths
+   - Configure health checks for your services
+   - Enable HTTPS with ACM certificates
+
+4. Update security groups:
+   - Allow inbound traffic from ALB to your containers
+   - Configure appropriate outbound rules
+   - Set up container-to-container communication if needed
+
+5. For production deployment, add these environment variables to your ECS task definition or EKS deployment:
+```json
+{
+  "environment": [
+    {
+      "name": "API_URL",
+      "value": "https://your-alb-endpoint.region.elb.amazonaws.com"
+    }
+  ]
+}
+```
+
+For detailed deployment instructions, refer to:
+- [Amazon ECS deployment guide](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/getting-started.html)
+- [ALB with ECS guide](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-load-balancing.html)
+- [EKS deployment guide](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html)
 
 ### Deploy on Vercel
 
