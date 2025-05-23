@@ -27,7 +27,7 @@ export const getTodos = cache(async (): Promise<Todo[]> => {
     
     // Transform the Laravel API response to match our Todo type
     const data = await response.json();
-    return data.map((item: any) => ({
+    return data.map((item: {id: number; title: string; completed: boolean}) => ({
       id: item.id.toString(),
       text: item.title, // Map Laravel's 'title' to our 'text'
       completed: item.completed
