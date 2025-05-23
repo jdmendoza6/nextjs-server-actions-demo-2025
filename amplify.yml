@@ -6,7 +6,7 @@ frontend:
         - npm ci
     build:
       commands:
-        - echo "NEXT_PUBLIC_API_URL=http://k8s-laraveltodoapi-01d23bbaf7-1247280372.ap-southeast-1.elb.amazonaws.com/api" >> .env.production
+        - echo "NEXT_PUBLIC_API_URL=http://larave-appli-i430xqq1t4jx-426544142.ap-southeast-1.elb.amazonaws.com/api" >> .env.production
         - npm run build
   artifacts:
     baseDirectory: .next
