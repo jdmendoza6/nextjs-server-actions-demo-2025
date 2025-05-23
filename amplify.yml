@@ -21,6 +21,8 @@ frontend:
             value: 'no-cache'
           - key: 'Expires'
             value: '0'
+          - key: 'X-Cache-Control'
+            value: 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0'
   cache:
     paths:
       - node_modules/**/*
@@ -28,3 +30,9 @@ frontend:
     excludePaths:
       - .next/server/pages/**/*
       - .next/static/development/**/*
+  customRules:
+    - pattern: '**/*'
+      headers:
+        Cache-Control: "no-store, no-cache, must-revalidate"
+        Pragma: "no-cache"
+        Expires: "0"

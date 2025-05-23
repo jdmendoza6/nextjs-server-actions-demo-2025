@@ -1,28 +1,25 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
-  async headers() {
+  output: 'standalone',
+  headers: async () => {
     return [
       {
-        // Apply these headers to all routes
         source: '/:path*',
         headers: [
           {
-            key: 'Access-Control-Allow-Origin',
-            value: '*',
+            key: 'Cache-Control',
+            value: 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
           },
           {
-            key: 'Access-Control-Allow-Methods',
-            value: 'GET,OPTIONS,PATCH,DELETE,POST,PUT',
+            key: 'Pragma',
+            value: 'no-cache',
           },
           {
-            key: 'Access-Control-Allow-Headers',
-            value: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version',
+            key: 'Expires',
+            value: '0',
           },
         ],
       },
-    ];
+    ]
   },
-};
-
-module.exports = nextConfig;
+}
