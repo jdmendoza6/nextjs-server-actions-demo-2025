@@ -3,6 +3,9 @@ import AddTodoForm from './components/AddTodoForm';
 import TodoItem from './components/TodoItem';
 import ErrorBoundary from './components/ErrorBoundary';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function Home() {
   const todos = await getTodos();
 

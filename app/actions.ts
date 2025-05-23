@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { cache } from 'react';
+// Removed cache import as we're not using it anymore
 
 // Define the Todo type
 export type Todo = {
@@ -14,11 +14,12 @@ export type Todo = {
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 
-// Get all todos with caching for better performance
-export const getTodos = cache(async (): Promise<Todo[]> => {
+// Get all todos without caching
+export const getTodos = async (): Promise<Todo[]> => {
   try {
     const response = await fetch(`${API_URL}/todos`, {
-      next: { revalidate: 60 } // Revalidate every 60 seconds
+      cache: 'no-store',
+      next: { revalidate: 0 }
     });
     
     if (!response.ok) {
@@ -36,7 +37,7 @@ export const getTodos = cache(async (): Promise<Todo[]> => {
     console.error('Error fetching todos:', error);
     return [];
   }
-});
+};
 
 // Add a new todo
 export async function addTodo(formData: FormData) {
