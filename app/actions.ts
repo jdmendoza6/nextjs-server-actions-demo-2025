@@ -18,8 +18,8 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 export const getTodos = async (): Promise<Todo[]> => {
   try {
     const response = await fetch(`${API_URL}/todos`, {
-      cache: 'no-store',
-      next: { revalidate: 0 }
+      // cache: 'no-store',
+      next: { revalidate: 60 }
     });
     
     if (!response.ok) {
@@ -63,7 +63,7 @@ export async function addTodo(formData: FormData) {
       return { error: errorData.message || 'Failed to add todo' };
     }
     
-    revalidatePath('/');
+    // revalidatePath('/');
     return { success: true };
   } catch (error) {
     console.error('Error adding todo:', error);
